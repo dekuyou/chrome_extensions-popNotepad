@@ -1,0 +1,270 @@
+<html>
+<head>
+<title>pop Notepad</title>
+<style type="text/css">
+.rtop, .rbottom{display:block; background: #FFF}
+.rtop *, .rbottom *{display: block; height: 1px; overflow: hidden; background-color: #eeeecc;}
+.r1{margin: 0 5px}
+.r2{margin: 0 3px}
+.r3{margin: 0 2px}
+.r4{margin: 0 1px; height: 2px}
+</style>
+<script>
+
+var background = chrome.extension.getBackgroundPage();
+
+var text="";
+
+var nowpage=(localStorage["nowpage"] || "1");
+
+
+window.addEventListener('load', function(e) {
+//	getSelectedText();
+	
+	init();
+	
+	checkAreasize();
+	
+	getSelectedText();
+	
+	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
+
+	
+//	setInterval("update();checkAreasize();", 1*1000); // 1*1000 = 1s
+}, false);
+
+function console(){
+	console.log('test:' + text);
+	background.foo();
+
+}
+
+
+
+window.addEventListener('keyup', function(e) {
+	update();
+	
+	checkAreasize();
+}, false);
+
+window.addEventListener('keydown', function(e) {
+	
+	checkAreasize();
+}, false);
+
+function getSelectedText(){
+	chrome.tabs.getSelected(null, function(tab){
+        chrome.tabs.sendRequest(tab.id, {selected:true}, function(res){
+			text = (res.text || "");
+			document.getElementById("rtxt").value = document.getElementById("rtxt").value +text;
+			update();
+			checkAreasize();
+			
+
+		});
+	});
+}
+
+function init(){
+	document.getElementById("rtxt").value = ( localStorage["notepad"+nowpage] || "" )+"";
+}
+
+function update(){
+	localStorage["notepad"+nowpage] = document.getElementById("rtxt").value ;
+	
+	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
+
+}
+
+function checkAreasize(){ 
+	tval = document.getElementById("rtxt").value;
+	num = tval.match(/\n/g);   //
+	rnum = tval.split(/\n/g);
+	var retu =40;
+	var gyosuu = 10;
+	if(tval==""){
+		return;
+	}
+	for(i=0;i < rnum.length;i = i +1){
+		if (retu < countByte(rnum[i])){
+			retu = countByte(rnum[i]);
+		}
+	}
+
+	if(num!=null){
+		
+
+		
+		gyosuu = num.length +2;
+		if(gyosuu < 10){
+			gyosuu = 10;
+		}
+	}
+	
+	document.getElementById("rtxt").cols = retu;
+	document.getElementById("rtxt").rows = gyosuu;
+
+}
+
+
+function countByte(str) {
+    var count = 0;
+    for(var i = 0; i < str.length; i++) {
+       if (escape(str.charAt(i)).length < 4) {
+          count++;
+       }
+       else {
+          count += 2;
+       }
+    }
+    return count;
+}
+
+function nextPage(){
+	if((nowpage-0) <999){
+		nowpage = localStorage["nowpage"] = nowpage -0 + 1;
+	}
+	background.badge(nowpage);	
+	init();
+	checkAreasize();	
+	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
+
+}
+
+function prevPage(){
+	if((nowpage-0) >1){
+		nowpage = localStorage["nowpage"] = nowpage -0 - 1;
+	}
+	background.badge(nowpage);	
+	init();
+	checkAreasize();
+	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
+
+}
+function viewStatus(str1,str2){
+    //
+    var status = document.getElementById(str1);
+    status.innerHTML = str2;
+    setTimeout(function() { status.innerHTML = ""; }, 3 * 1000);
+
+
+}
+
+
+function twitter(){
+	//loadinfo.net.gif
+	document.getElementById("status_twitter").innerHTML ="<img src=loadinfo.net.gif label='updateing.'>";
+
+	if(countByte((localStorage["notepad"+nowpage] || "")) > 140){
+		viewStatus("status_twitter","Over 140.");
+		return;
+	}
+//    setTimeout(background.twitter(nowpage), 1 * 1000);
+	if((localStorage["twitterid"] || "") == ""){
+		background.twitter(nowpage);
+	}else{
+		popup( 'comment');
+		
+	}
+//	viewStatus("status_twitter","posted.");
+
+}
+function doT(){
+		background.twitter(nowpage);
+		popdown('comment');
+}
+function cancelT(){
+		viewStatus("status_twitter","cancel.");
+		popdown('comment');
+}
+
+
+function gmail(){
+//a/bsweb.office-on-the.net mail
+	var domain;
+	if(localStorage["appsdomain"]){
+		domain="a/"+localStorage["appsdomain"];
+	}else{
+		domain="mail"
+	}
+	
+	var rnum = (localStorage["notepad"+nowpage] || "").split(/\n/g);
+	var su = rnum[0];
+	
+	var url = 'https://mail.google.com/'+ domain +'/?view=cm&fs=1&tf=1&su='+encodeURI(su)+'&source=mailto&body='+encodeURI((localStorage["notepad"+nowpage] || ""))
+
+	if(countByte(url) > 2000){
+		viewStatus("status_gmail","Text is too long.");
+		return;
+	}
+
+	background.gmail(nowpage);
+	
+	
+}
+
+function copy(){
+//	copy((localStorage["notepad"+nowpage] || ""));
+	viewStatus("status_copy","Copy to ClipBoard.");
+
+}
+
+chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
+        if (request.status==200){
+			viewStatus("status_twitter","posted.");
+		}else if(request.status==404){
+			viewStatus("status_twitter","failed.");
+		}
+});
+
+function popup( id) {
+    var elm = document.getElementById(id);
+    elm.style.display='block';
+    elm.style.position='absolute';
+
+	elm.style.left = event.pageX + "px";
+
+    elm.style.top = (event.pageY - 35 ) + "px";
+}
+
+function popdown(id) {
+    document.getElementById(id).style.display='none';
+}
+
+</script>
+</head>
+<body>
+<table>
+<tr >
+<td colspan=4>
+<textarea name="popnote" id=rtxt rows="10" cols="40" style="overflow:hidden;"></textarea>
+</td>
+</tr>
+</table>
+<table height=5px width=300px>
+<tr>
+<td align=left width=10px ><span id=prevpage onClick=prevPage()><</span></td>
+<td>&nbsp;
+<!--<span id=copy onClick=copy();><img src=copy.png label='to ClipBoard.'></span><span id=status_copy></span>-->
+<span id=twitter onClick=twitter();><img src=twitter.png label='update Twitter.'></span><span id=status_twitter></span>
+<span id=gmail onClick=gmail();><img src=gmail.png label='send from gmail.'></span><span id=status_gmail></span>
+
+</td>
+<td align=right ><span id=byte></span>&nbsp;</td>
+<td align=right width=10px ><span id=nextpage onClick=nextPage();>></span></td>
+</tr>
+</table>
+
+
+<div id="comment" style="display: none; background-color: #eeeecc; width: 100px;　height 10px; position: absolute; top: 0; left: 0;">
+<b class="rtop">
+  <b class="r1"></b> <b class="r2"></b> <b class="r3"></b> <b class="r4"></b>
+</b>
+<div style="margin: 1px 0 1px 0; width: 100%; text-align: center;" ><span onClick=doT();>Post</span> &nbsp; <span onClick=cancelT();>cancel</span></div>
+<b class="rbottom">
+  <b class="r4"></b> <b class="r3"></b> <b class="r2"></b> <b class="r1"></b>
+</b>
+</div>
+</body> 
+</html>
+
