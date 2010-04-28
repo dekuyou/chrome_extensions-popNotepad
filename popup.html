@@ -191,7 +191,7 @@ function gmail(){
 	var rnum = (localStorage["notepad"+nowpage] || "").split(/\n/g);
 	var su = rnum[0];
 	
-	var url = 'https://mail.google.com/'+ domain +'/?view=cm&fs=1&tf=1&su='+encodeURI(su)+'&source=mailto&body='+encodeURI((localStorage["notepad"+nowpage] || ""))
+	var url = 'https://mail.google.com/'+ domain +'/?view=cm&fs=1&tf=1&su='+encodeURIComponent(su)+'&source=mailto&body='+encodeURIComponent((localStorage["notepad"+nowpage] || ""))
 
 	if(countByte(url) > 2000){
 		viewStatus("status_gmail","Text is too long.");

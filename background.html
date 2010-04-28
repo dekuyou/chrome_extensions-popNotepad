@@ -74,7 +74,7 @@ function twitter(nowpage){
 	// http://twitter.com/statuses/update.xml
 	// http://watcher.moe-nifty.com/memo/docs/twitterAPI49.txt
 	if((localStorage["twitterid"] || "") == ""){
-		chrome.tabs.create({url:'http://twitter.com/home?status='+encodeURI((localStorage["notepad"+nowpage] || ""))});
+		chrome.tabs.create({url:'http://twitter.com/home?status='+encodeURIComponent((localStorage["notepad"+nowpage] || ""))});
 	}else{
 		var xhr = new XMLHttpRequest(); 
 	
@@ -91,7 +91,7 @@ function twitter(nowpage){
 			} 
 		}; 
 		xhr.setRequestHeader("Content-Type", "application/x-www-form-urlencoded");
-		xhr.send('status='+encodeURI((localStorage["notepad"+nowpage] || "")));
+		xhr.send('status='+encodeURIComponent((localStorage["notepad"+nowpage] || "")));
 		
 		
 		
@@ -112,7 +112,7 @@ function gmail(nowpage){
 	}
 	var rnum = (localStorage["notepad"+nowpage] || "").split(/\n/g);
 	var su = rnum[0];
-	var url = 'https://mail.google.com/'+ domain +'/?view=cm&fs=1&tf=1&su='+encodeURI(su)+'&source=mailto&body='+encodeURI((localStorage["notepad"+nowpage] || ""));
+	var url = 'https://mail.google.com/'+ domain +'/?view=cm&fs=1&tf=1&su='+encodeURIComponent(su)+'&source=mailto&body='+encodeURIComponent((localStorage["notepad"+nowpage] || ""));
 	
 	window.open(url, 'gmail1', 'width=600, height=400, menubar=no, toolbar=no, scrollbars=yes');
 	
