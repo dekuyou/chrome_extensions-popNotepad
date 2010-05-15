@@ -1,6 +1,7 @@
 <html>
 <head>
 <title>pop Notepad</title>
+<link rel = "stylesheet" href = "EdgeToEdge.css" /> 	
 <style type="text/css">
 .rtop, .rbottom{display:block; background: #FFF}
 .rtop *, .rbottom *{display: block; height: 1px; overflow: hidden; background-color: #eeeecc;}
@@ -19,8 +20,6 @@ var nowpage=(localStorage["nowpage"] || "1");
 
 
 window.addEventListener('load', function(e) {
-//	getSelectedText();
-	
 	init();
 	
 	checkAreasize();
@@ -30,7 +29,8 @@ window.addEventListener('load', function(e) {
 	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
 
 	
-//	setInterval("update();checkAreasize();", 1*1000); // 1*1000 = 1s
+	document.getElementById("pageno").innerHTML = nowpage;
+	
 }, false);
 
 function console(){
@@ -121,26 +121,37 @@ function countByte(str) {
 }
 
 function nextPage(){
+	update();
+
 	if((nowpage-0) <999){
 		nowpage = localStorage["nowpage"] = nowpage -0 + 1;
+	}else{
+		nowpage = 1;
 	}
-	background.badge(nowpage);	
 	init();
 	checkAreasize();	
 	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
-
+	
+	document.getElementById("pageno").innerHTML = nowpage;
 }
 
 function prevPage(){
+	update();
+
 	if((nowpage-0) >1){
 		nowpage = localStorage["nowpage"] = nowpage -0 - 1;
+	}else{
+		nowpage = 999;
 	}
-	background.badge(nowpage);	
 	init();
 	checkAreasize();
 	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
+	
+	document.getElementById("pageno").innerHTML = nowpage;
+
 
 }
+
 function viewStatus(str1,str2){
     //
     var status = document.getElementById(str1);
@@ -153,28 +164,29 @@ function viewStatus(str1,str2){
 
 function twitter(){
 	//loadinfo.net.gif
-	document.getElementById("status_twitter").innerHTML ="<img src=loadinfo.net.gif label='updateing.'>";
+	document.getElementById("status").innerHTML ="<img src=loadinfo.net.gif label='updateing.'>";
 
 	if(countByte((localStorage["notepad"+nowpage] || "")) > 140){
-		viewStatus("status_twitter","Over 140.");
+		viewStatus("status","Over 140byte.");
 		return;
 	}
-//    setTimeout(background.twitter(nowpage), 1 * 1000);
 	if((localStorage["twitterid"] || "") == ""){
 		background.twitter(nowpage);
 	}else{
-		popup( 'comment');
+		document.getElementById("popupBody").innerHTML ='<a href=# onclick=background.twitter(nowpage);doT();>Post</a> &nbsp; <span onClick=cancelT();>cancel</span>';
+		popup('comment');
 		
 	}
-//	viewStatus("status_twitter","posted.");
 
 }
+
+
 function doT(){
-		background.twitter(nowpage);
+		viewStatus("status","");
 		popdown('comment');
 }
 function cancelT(){
-		viewStatus("status_twitter","cancel.");
+		viewStatus("status","cancel.");
 		popdown('comment');
 }
 
@@ -194,7 +206,7 @@ function gmail(){
 	var url = 'https://mail.google.com/'+ domain +'/?view=cm&fs=1&tf=1&su='+encodeURIComponent(su)+'&source=mailto&body='+encodeURIComponent((localStorage["notepad"+nowpage] || ""))
 
 	if(countByte(url) > 2000){
-		viewStatus("status_gmail","Text is too long.");
+		viewStatus("status","Text is too long.");
 		return;
 	}
 
@@ -204,67 +216,215 @@ function gmail(){
 }
 
 function copy(){
-//	copy((localStorage["notepad"+nowpage] || ""));
-	viewStatus("status_copy","Copy to ClipBoard.");
+	viewStatus("status","Copy to ClipBoard.");
 
 }
 
 chrome.extension.onRequest.addListener(function(request, sender, sendResponse) {
         if (request.status==200){
-			viewStatus("status_twitter","posted.");
+			viewStatus("status","posted.");
 		}else if(request.status==404){
-			viewStatus("status_twitter","failed.");
+			viewStatus("status","failed.");
 		}
 });
+
+
+
+
+
 
 function popup( id) {
     var elm = document.getElementById(id);
     elm.style.display='block';
     elm.style.position='absolute';
 
-	elm.style.left = event.pageX + "px";
+	elm.style.left = (event.pageX -35) + "px";
 
-    elm.style.top = (event.pageY - 35 ) + "px";
+    elm.style.top = (event.pageY -40) + "px";
 }
 
 function popdown(id) {
     document.getElementById(id).style.display='none';
 }
 
+
+function postMail(){
+	document.getElementById("status").innerHTML ="<img src=loadinfo.net.gif label='updateing.'>";
+
+	var rnum = (localStorage["notepad"+nowpage] || "").split(/\n/g);
+	var su = rnum[0];
+	var url = 'mailto:?subject='+encodeURIComponent(su)+'&body='+encodeURIComponent((localStorage["notepad"+nowpage] || ""));
+
+
+
+	document.getElementById("popupBody").innerHTML ='<a href="'+url+'" target=_blank onclick=doT();>Send</a> &nbsp; <span onClick=cancelT();>cancel</span>';
+	popup('comment');
+	
+	}
+
+function remove(){
+	document.getElementById("status").innerHTML ="<img src=loadinfo.net.gif label='updateing.'>";
+
+	document.getElementById("popupBody").innerHTML ='<a href=# onclick=doRemove();>delet</a> &nbsp; <span onClick=cancelT();>cancel</span>';
+	popup('comment');
+
+}
+
+function doRemove(){
+	viewStatus("status","Delete.");
+	localStorage.removeItem("notepad"+nowpage);
+	
+	init();
+	checkAreasize();
+	
+	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
+
+	popdown('comment');
+}
+
+
+function doNotepad(setpage){
+	nowpage = localStorage["nowpage"] = setpage;
+	showNotepad();
+	init();
+	checkAreasize();
+	
+	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
+	
+		document.getElementById("pageno").innerHTML = nowpage;
+}
+
+function showNotepad(){
+	document.getElementById('notearea').style.display='inline';
+	document.getElementById('menuarea').style.display='none';
+}
+
+
+function doMenu(){
+	document.getElementById('notearea').style.display='none';
+	document.getElementById('menuarea').style.display='inline';
+	var str="";
+	var newnote = true;
+	var retu=0;
+	for(i=1;i <1000;i = i +1){
+		rtxt=(localStorage["notepad" + i] || "");
+		if(rtxt.length > 0){
+			rnum = rtxt.split(/\n/g);
+			str = str + '<li><a href=# onClick="doNotepad('+i+');">P.'+i+'<span class="secondaryWLink" style="width: 220px; white-space: nowrap; overflow: hidden; text-overflow: clip;">'+rnum[0]+'</span></a></li>';
+			retu = retu +1;
+		}else{
+			if(newnote){
+				str = str + '<li><a href=# onClick="doNotepad('+i+');">P.'+i+'<span class="secondaryWLink" >New Note.</span></a></li>';
+				newnote = false;
+				retu =retu +1;
+			}
+		
+		}
+	}
+	
+	str=str+'<li><a href=options.html target=_blank>&nbsp;<span class="secondaryWLink" >About popNotepad</span></a></li>';
+	
+
+	
+	document.getElementById('menuline').innerHTML = str;
+	
+	window.location.hash = "menuline";
+	
+}
+function doSearch(){
+	document.getElementById('notearea').style.display='none';
+	document.getElementById('menuarea').style.display='inline';
+	var str='<li><a href=# onClick="doMenu();"><img src=la.png label="prev."><span class="secondaryWLink" >back Menu.</span></a></li>';
+	
+	for(i=1;i <1000;i = i +1){
+		rtxt=(localStorage["notepad" + i] || "");
+		if(rtxt.indexOf(document.getElementById('searchtext').value) >= 0){
+			if(rtxt.length > 0){
+				rnum = rtxt.split(/\n/g);
+				str = str + '<li><a href=# onClick="doNotepad('+i+');">P.'+i+'<span class="secondaryWLink" style="width: 220px; white-space: nowrap; overflow: hidden; text-overflow: clip;">'+rnum[0]+'</span></a></li>';
+			}
+		}
+	}
+	
+	
+	document.getElementById('menuline').innerHTML = str;
+	
+	window.location.hash = "menuline";
+	
+}
+
 </script>
 </head>
 <body>
-<table>
-<tr >
-<td colspan=4>
-<textarea name="popnote" id=rtxt rows="10" cols="40" style="overflow:hidden;"></textarea>
-</td>
-</tr>
-</table>
-<table height=5px width=300px>
-<tr>
-<td align=left width=10px ><span id=prevpage onClick=prevPage()><</span></td>
-<td>&nbsp;
-<!--<span id=copy onClick=copy();><img src=copy.png label='to ClipBoard.'></span><span id=status_copy></span>-->
-<span id=twitter onClick=twitter();><img src=twitter.png label='update Twitter.'></span><span id=status_twitter></span>
-<span id=gmail onClick=gmail();><img src=gmail.png label='send from gmail.'></span><span id=status_gmail></span>
 
-</td>
-<td align=right ><span id=byte></span>&nbsp;</td>
-<td align=right width=10px ><span id=nextpage onClick=nextPage();>></span></td>
-</tr>
+
+<div id="notearea" style="width: 100%">
+<table height=5px cellpadding="0" cellspacing="0" style="width: 100%">
+	<tr>
+		<td align=left width=10% >Page.<span id=pageno></span></td>
+		<td align=center >&nbsp;<span id=status></span>&nbsp;</td>
+		<td align=right width=10% ><span onClick="update();doMenu();">index</span></td>
+	</tr>
 </table>
+
+<table>
+	<tr >
+		<td colspan=4>
+			<textarea name="popnote" id=rtxt rows="10" cols="40" style="overflow:hidden;"></textarea>
+		</td>
+	</tr>
+</table>
+
+<table height=5px cellpadding="0" cellspacing="3" style="width: 100%">
+	<tr>
+		<td align=left width=10% ><span id=prevpage onClick=prevPage()><img src=la.png label='prev.'></span></td>
+		<td align=left width=50%>&nbsp;&nbsp;
+			<span id=twitter onClick=twitter();><img src=twitter.png label='update Twitter.'></span>
+			<span id=mail onClick=postMail();><img src=mail.png label='send from mail.'></span>
+			<span id=gmail onClick=gmail();><img src=gmail.png label='send from gmail.'></span>
+		</td>
+		<td align=right width=30%>
+			<span id=rm onClick=remove();><img src=rm.png label='remove.'></span>
+			<span id=byte></span>
+			&nbsp;</td>
+		<td align=right width=10% ><span id=nextpage onClick=nextPage();><img src=ra.png label='next.'></span></td>
+	</tr>
+</table>
+</div>
+
+<div id="menuarea"  style="width: 100%; display: none; overflow:auto;">
+
+
+<div style="text-align: center;">
+<table style="width: 325px;">
+	<tr><td>
+	<input type=text size=30 id=searchtext><button onClick=doSearch();>Search</button>
+	</td></tr>
+</table>
+</div>
+<li>
+	<div id="menuline">
+
+	
+	</div>
+</li>
+</div>
+
 
 
 <div id="comment" style="display: none; background-color: #eeeecc; width: 100px;　height 10px; position: absolute; top: 0; left: 0;">
 <b class="rtop">
   <b class="r1"></b> <b class="r2"></b> <b class="r3"></b> <b class="r4"></b>
 </b>
-<div style="margin: 1px 0 1px 0; width: 100%; text-align: center;" ><span onClick=doT();>Post</span> &nbsp; <span onClick=cancelT();>cancel</span></div>
+<div style="margin: 1px 0 1px 0; width: 100%; text-align: center;" id=popupBody></div>
 <b class="rbottom">
   <b class="r4"></b> <b class="r3"></b> <b class="r2"></b> <b class="r1"></b>
 </b>
 </div>
+
+
+
+
 </body> 
 </html>
 
