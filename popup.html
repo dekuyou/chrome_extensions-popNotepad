@@ -28,7 +28,7 @@ window.addEventListener('load', function(e) {
 	
 	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
 
-	
+	background.badge(nowpage);
 	document.getElementById("pageno").innerHTML = nowpage;
 	
 }, false);
@@ -123,6 +123,7 @@ function countByte(str) {
 function nextPage(){
 	update();
 
+
 	if((nowpage-0) <999){
 		nowpage = localStorage["nowpage"] = nowpage -0 + 1;
 	}else{
@@ -133,6 +134,8 @@ function nextPage(){
 	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
 	
 	document.getElementById("pageno").innerHTML = nowpage;
+	background.badge(nowpage);
+
 }
 
 function prevPage(){
@@ -149,6 +152,7 @@ function prevPage(){
 	
 	document.getElementById("pageno").innerHTML = nowpage;
 
+	background.badge(nowpage);
 
 }
 
@@ -292,6 +296,8 @@ function doNotepad(setpage){
 	document.getElementById("byte").innerHTML = countByte((localStorage["notepad"+nowpage] || ""));
 	
 		document.getElementById("pageno").innerHTML = nowpage;
+			background.badge(nowpage);
+
 }
 
 function showNotepad(){
