@@ -316,7 +316,7 @@ function doMenu(){
 		rtxt=(localStorage["notepad" + i] || "");
 		if(rtxt.length > 0){
 			rnum = rtxt.split(/\n/g);
-			str = str + '<li><a href=# onClick="doNotepad('+i+');">P.'+i+'<span class="secondaryWLink" style="width: 220px; white-space: nowrap; overflow: hidden; text-overflow: clip;">'+escape(rnum[0])+'</span></a></li>';
+			str = str + '<li><a href=# onClick="doNotepad('+i+');">P.'+i+'<span class="secondaryWLink" style="width: 220px; white-space: nowrap; overflow: hidden; text-overflow: clip;">'+htmlEscape(rnum[0])+'</span></a></li>';
 			retu = retu +1;
 		}else{
 			if(newnote){
@@ -347,7 +347,7 @@ function doSearch(){
 		if(rtxt.indexOf(document.getElementById('searchtext').value) >= 0){
 			if(rtxt.length > 0){
 				rnum = rtxt.split(/\n/g);
-				str = str + '<li><a href=# onClick="doNotepad('+i+');">P.'+i+'<span class="secondaryWLink" style="width: 220px; white-space: nowrap; overflow: hidden; text-overflow: clip;">'+escape(rnum[0])+'</span></a></li>';
+				str = str + '<li><a href=# onClick="doNotepad('+i+');">P.'+i+'<span class="secondaryWLink" style="width: 220px; white-space: nowrap; overflow: hidden; text-overflow: clip;">'+htmlEscape(rnum[0])+'</span></a></li>';
 			}
 		}
 	}
@@ -358,6 +358,11 @@ function doSearch(){
 	window.location.hash = "menuline";
 	
 }
+var htmlEscape = (function(){
+  var map = {"<":"&lt;", ">":"&gt;", "&":"&amp;", "'":"&#39;", "\"":"&quot;", " ":"&nbsp;"};
+  var replaceStr = function(s){ return map[s]; };
+  return function(str) { return str.replace(/<|>|&|'|"|\s/g, replaceStr); };
+})();
 
 </script>
 </head>

@@ -1,6 +1,6 @@
 {
   "name": "pop Notepad",
-  "version": "2.5.0.3",
+  "version": "2.5.0.4",
   "description": "pop Notepad(use local storage.)",
   "icons": { "48": "images.png",
           "128": "images.png" },  
