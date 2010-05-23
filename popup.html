@@ -127,7 +127,7 @@ function nextPage(){
 	if((nowpage-0) <999){
 		nowpage = localStorage["nowpage"] = nowpage -0 + 1;
 	}else{
-		nowpage = 1;
+		nowpage = localStorage["nowpage"] = 1;
 	}
 	init();
 	checkAreasize();	
@@ -144,7 +144,7 @@ function prevPage(){
 	if((nowpage-0) >1){
 		nowpage = localStorage["nowpage"] = nowpage -0 - 1;
 	}else{
-		nowpage = 999;
+		nowpage = localStorage["nowpage"] = 999;
 	}
 	init();
 	checkAreasize();
