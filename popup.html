@@ -170,17 +170,17 @@ function twitter(){
 	//loadinfo.net.gif
 	document.getElementById("status").innerHTML ="<img src=loadinfo.net.gif label='updateing.'>";
 
-	if(countByte((localStorage["notepad"+nowpage] || "")) > 140){
-		viewStatus("status","Over 140byte.");
-		return;
-	}
-	if((localStorage["twitterid"] || "") == ""){
+//	if(countByte((localStorage["notepad"+nowpage] || "")) > 140){
+//		viewStatus("status","Over 140byte.");
+//		return;
+//	}
+//	if((localStorage["twitterid"] || "") == ""){
 		background.twitter(nowpage);
-	}else{
-		document.getElementById("popupBody").innerHTML ='<a href=# onclick=background.twitter(nowpage);doT();>Post</a> &nbsp; <span onClick=cancelT();>cancel</span>';
-		popup('comment');
+//	}else{
+//		document.getElementById("popupBody").innerHTML ='<a href=# onclick=background.twitter(nowpage);doT();>Post</a> &nbsp; <span onClick=cancelT();>cancel</span>';
+//		popup('comment');
 		
-	}
+//	}
 
 }
 
@@ -215,6 +215,14 @@ function gmail(){
 	}
 
 	background.gmail(nowpage);
+	
+	
+}
+
+
+function gCalendar(){
+
+	background.gCalendar(nowpage);
 	
 	
 }
@@ -393,6 +401,7 @@ var htmlEscape = (function(){
 			<span id=twitter onClick=twitter();><img src=twitter.png label='update Twitter.'></span>
 			<span id=mail onClick=postMail();><img src=mail.png label='send from mail.'></span>
 			<span id=gmail onClick=gmail();><img src=gmail.png label='send from gmail.'></span>
+			<span id=gCalendar onClick=gCalendar();><img src=goggle-calendar.png label='add to Google Calendar.'></span>
 		</td>
 		<td align=right width=30%>
 			<span id=rm onClick=remove();><img src=rm.png label='remove.'></span>
