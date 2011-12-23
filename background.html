@@ -74,7 +74,12 @@ function twitter(nowpage){
 	// http://twitter.com/statuses/update.xml
 	// http://watcher.moe-nifty.com/memo/docs/twitterAPI49.txt
 //	if((localStorage["twitterid"] || "") == ""){
-		chrome.tabs.create({url:'http://twitter.com/home?status='+encodeURIComponent((localStorage["notepad"+nowpage] || ""))});
+//		chrome.tabs.create({url:'http://twitter.com/home?status='+encodeURIComponent((localStorage["notepad"+nowpage] || ""))});
+
+		// http://twitter.com/intent/tweet?status=
+		
+	window.open('http://twitter.com/intent/tweet?status='+encodeURIComponent((localStorage["notepad"+nowpage] || "")), 'Twitter', 'width=600, height=250, menubar=no, toolbar=no, scrollbars=yes');
+		
 //	}else{
 //		var xhr = new XMLHttpRequest(); 
 //	
