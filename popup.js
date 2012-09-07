@@ -342,7 +342,7 @@ function doMenu(){
 		if(rtxt.length > 0){
 			rnum = rtxt.split(/\n/g);
 			menuline = menuline + '<li><a href=# id="doNotepad_'+i+'" >P.'+i+'<span class="secondaryWLink" style="width: 220px; white-space: nowrap; overflow: hidden; text-overflow: clip;">'+htmlEscape(rnum[0])+'</span></a></li>';
-			document.getElementById('menuline').innerHTML = menuline;
+
 
 			arry.push(i);
 
@@ -352,7 +352,6 @@ function doMenu(){
 		}else{
 			if(newnote){
 				menuline = menuline + '<li><a href=# id="doNotepad_'+i+'" >P.'+i+'<span class="secondaryWLink" >New Note.</span></a></li>';
-				document.getElementById('menuline').innerHTML = menuline;
 				arry.push(i);
 
 				// document.getElementById("doNotepad_"+i).addEventListener('click', (function (i){ return function (){ doNotepad(i);} })(i),false );
@@ -386,22 +385,17 @@ function doSearch(){
 
 	menuline ='<li><a href=# id="doMenu" ><img src="./images/la.png" label="prev." ><span class="secondaryWLink" >back Menu.</span></a></li>';
 
-	document.getElementById('menuline').innerHTML = menuline;
-	// document.getElementById("doMenu").addEventListener('click', (function (i){ return function(){ doMenu(i);} })(i),false );
+
 	
 	for(i=1;i <1000;i = i +1){
 		rtxt=(localStorage["notepad" + i] || "");
 		if(rtxt.indexOf(document.getElementById('searchtext').value) >= 0){
 			if(rtxt.length > 0){
-				menuline = document.getElementById('menuline').innerHTML ;
+
 				rnum = rtxt.split(/\n/g);
 				menuline = menuline + '<li><a href=# id="doNotepad_'+i+'" >P.'+i+'<span class="secondaryWLink" style="width: 220px; white-space: nowrap; overflow: hidden; text-overflow: clip;">'+htmlEscape(rnum[0])+'</span></a></li>';
 
-				document.getElementById('menuline').innerHTML = menuline;
 				arry.push(i);
-
-				// document.getElementById("doNotepad_"+i).addEventListener('click', (function (i){ return function (){ doNotepad(i);} })(i),false );
-
 
 
 			}
@@ -409,7 +403,8 @@ function doSearch(){
 	}
 	
 	
-	// document.getElementById('menuline').innerHTML = str;
+
+	document.getElementById('menuline').innerHTML = menuline;
 	
 	window.location.hash = "menuline";
 
